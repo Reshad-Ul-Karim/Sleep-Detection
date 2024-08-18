@@ -19,14 +19,17 @@ dfs_statistical = pd.concat(pd.read_excel(file_statistical, sheet_name=None), ig
 # Merge all dataframes on 'SubNo' and 'SegNo'
 df_combined = pd.merge(dfs_arterial, dfs_cardio, on=['SubNo', 'SegNo'], suffixes=('_arterial', '_cardio'))
 df_combined = pd.merge(df_combined, dfs_statistical, on=['SubNo', 'SegNo'], suffixes=('', '_statistical'))
-
-# Handle missing values if any (already handled in previous steps, but let's confirm)
-df_combined.fillna(df_combined.mean(), inplace=True)
-
+df_combined.drop(['Class_cardio', 'Class_arterial'], axis=1, inplace=True)
+# print all the subNo
+print("\n".join([str(i) for i in df_combined['SubNo']]))
+# # Handle missing values if any (already handled in previous steps, but let's confirm)
+# df_combined.fillna(df_combined.mean(), inplace=True)
+#
 # Split the dataset into features and labels
-X = df_combined.drop(['Class'], axis=1)
+X = df_combined.drop(['Class', 'SubNo', 'SegNo'], axis=1)
 y = df_combined['Class']
-
+# export the data to csv
+df_combined.to_csv('Sleep_Stage_Combo2.csv', index=False)
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
@@ -74,8 +77,10 @@ print("Best parameters found: ", best_params)
 param_grid = {
     'n_estimators': [best_params['n_estimators'] - 50, best_params['n_estimators'], best_params['n_estimators'] + 50],
     'max_depth': [best_params['max_depth']],
-    'min_samples_split': [best_params['min_samples_split'] - 1, best_params['min_samples_split'], best_params['min_samples_split'] + 1],
-    'min_samples_leaf': [best_params['min_samples_leaf'] - 1, best_params['min_samples_leaf'], best_params['min_samples_leaf'] + 1],
+    'min_samples_split': [best_params['min_samples_split'] - 1, best_params['min_samples_split'],
+                          best_params['min_samples_split'] + 1],
+    'min_samples_leaf': [best_params['min_samples_leaf'] - 1, best_params['min_samples_leaf'],
+                         best_params['min_samples_leaf'] + 1],
     'max_features': [best_params['max_features']],
     'bootstrap': [best_params['bootstrap']]
 }
