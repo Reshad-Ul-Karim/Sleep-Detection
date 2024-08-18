@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import RandomizedSearchCV, GridSearchCV, StratifiedKFold
-from scipy.stats import randint, uniform
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.metrics import classification_report, accuracy_score, roc_auc_score
 import numpy as np
 
 # Load and prepare data
@@ -9,43 +9,67 @@ df = pd.read_csv('Sleep_Stage_Combo.csv')
 X = df.drop(['SubNo', 'SegNo', 'Class'], axis=1)
 y = df['Class']
 
-# Initialize classifier
-rf = RandomForestClassifier()
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-# Randomized Search to explore a broad range
-random_param_space = {
-    'n_estimators': randint(100, 500),  # More focused range
-    'max_depth': [10, 20, 30, 40, 50, None],
-    'min_samples_split': randint(2, 20),
-    'min_samples_leaf': randint(1, 10),
-    'max_features': ['sqrt', 'log2', None],
-    'bootstrap': [True, False]
+# Initialize the Random Forest Classifier with the best parameters from RandomizedSearchCV
+best_rf_params = {
+    'bootstrap': True,
+    'max_depth': 30,
+    'max_features': None,
+    'min_samples_leaf': 4,
+    'min_samples_split': 10,
+    'n_estimators': 227
 }
 
-# Using StratifiedKFold for better handling of imbalanced classes
+rf = RandomForestClassifier(**best_rf_params, random_state=42)
+
+# Train the model
+rf.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = rf.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+roc_auc = roc_auc_score(y_test, rf.predict_proba(X_test), multi_class='ovr')
+
+print(f"Final Model Accuracy: {accuracy}")
+print(f"Final Model Classification Report:\n{report}")
+print(f"Final ROC AUC Score: {roc_auc}")
+
+# Optional: Grid Search to fine-tune further around the best parameters if needed
 cv_strategy = StratifiedKFold(n_splits=5)
 
-random_search = RandomizedSearchCV(
-    rf, random_param_space, n_iter=100, scoring='balanced_accuracy', cv=cv_strategy,
-    n_jobs=-1, random_state=42, verbose=2
-)
-random_result = random_search.fit(X, y)
-print('Random Search Best Parameters:', random_result.best_params_)
-print('Random Search Best Score:', random_result.best_score_)
-
-# Grid Search to fine-tune around the best results from Randomized Search
 grid_param_space = {
-    'n_estimators': [random_result.best_params_['n_estimators'] - 50, random_result.best_params_['n_estimators'], random_result.best_params_['n_estimators'] + 50],
-    'max_depth': [random_result.best_params_['max_depth']],
-    'min_samples_split': [random_result.best_params_['min_samples_split'] - 1, random_result.best_params_['min_samples_split'], random_result.best_params_['min_samples_split'] + 1],
-    'min_samples_leaf': [random_result.best_params_['min_samples_leaf'] - 1, random_result.best_params_['min_samples_leaf'], random_result.best_params_['min_samples_leaf'] + 1],
-    'max_features': [random_result.best_params_['max_features']],
-    'bootstrap': [random_result.best_params_['bootstrap']]
+    'n_estimators': [best_rf_params['n_estimators'] - 50, best_rf_params['n_estimators'], best_rf_params['n_estimators'] + 50],
+    'max_depth': [best_rf_params['max_depth']],
+    'min_samples_split': [9, 10, 11],  # Adjusting based on the found best value
+    'min_samples_leaf': [3, 4, 5],  # Adjusting based on the found best value
+    'max_features': [best_rf_params['max_features']],
+    'bootstrap': [best_rf_params['bootstrap']]
 }
 
 grid_search = GridSearchCV(
-    rf, grid_param_space, cv=cv_strategy, scoring='balanced_accuracy', n_jobs=-1, verbose=2
+    rf, grid_param_space, cv=cv_strategy, scoring='balanced_accuracy', n_jobs=-1, verbose=2, error_score='raise'
 )
-grid_result = grid_search.fit(X, y)
-print('Grid Search Best Parameters:', grid_result.best_params_)
-print('Grid Search Best Score:', grid_result.best_score_)
+grid_result = grid_search.fit(X_train, y_train)
+
+# Final model evaluation after Grid Search
+best_model = grid_result.best_estimator_
+y_pred_final = best_model.predict(X_test)
+final_accuracy = accuracy_score(y_test, y_pred_final)
+final_report = classification_report(y_test, y_pred_final)
+final_roc_auc = roc_auc_score(y_test, best_model.predict_proba(X_test), multi_class='ovr')
+
+print(f"Grid Search Final Model Accuracy: {final_accuracy}")
+print(f"Grid Search Final Model Classification Report:\n{final_report}")
+print(f"Grid Search Final ROC AUC Score: {final_roc_auc}")
+
+# Feature Importance
+importances = best_model.feature_importances_
+feature_names = X.columns
+important_features = pd.Series(importances, index=feature_names).sort_values(ascending=False)
+
+print("Feature Importances:\n", important_features)
