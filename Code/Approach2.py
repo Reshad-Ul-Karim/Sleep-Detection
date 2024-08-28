@@ -8,8 +8,8 @@ from sklearn.metrics import accuracy_score
 
 
 # Load the dataset
-df = pd.read_csv("E:\Paper\Brain signal\PPG_Train_Data1.csv")
-df2 = pd.read_csv("E:\Paper\Brain signal\PPG_Test_Data1.csv")
+df = pd.read_csv("PPG_Train_Data1.csv")
+df2 = pd.read_csv("PPG_Test_Data1.csv")
 
 
 # Split the dataset into training and testing sets

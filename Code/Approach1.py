@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 
 
 # Load the dataset
-df = pd.read_csv("E:\Paper\Brain signal\Sleep_Stage_Combo2.csv")
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 
 # Split the dataset into training and testing sets
 drop_columns = ['SubNo', "SegNo", "Class", "Class2", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
