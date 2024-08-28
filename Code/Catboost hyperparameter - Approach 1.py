@@ -23,8 +23,7 @@ param_dist = {
     'l2_leaf_reg': [1, 3, 5, 7, 9],
     'border_count': [32, 50, 100, 200],
     'bagging_temperature': [0, 0.5, 1, 2, 3, 5, 7, 10],
-    'random_strength': [1, 2, 5, 10, 20],
-    'scale_pos_weight': [1, 2, 3, 5]
+    'random_strength': [1, 2, 5, 10, 20]
 }
 
 # Initialize the CatBoostClassifier
