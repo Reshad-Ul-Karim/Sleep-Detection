@@ -50,3 +50,7 @@ svm_class_report = classification_report(y_test, y_pred_best_svm)
 print(svm_accuracy)
 print(svm_class_report)
 
+
+with open("SVM model_evaluation.txt", "w") as file:
+    file.write(f'Accuracy for best SVM: {svm_accuracy * 100:.2f}%\n')
+    file.write(svm_class_report)
