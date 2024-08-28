@@ -18,13 +18,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_
 # Define the parameter grid for RandomizedSearchCV
 param_dist = {
     'n_estimators': [100, 200, 300, 400, 500],
-    'max_features': ['auto', 'sqrt', 'log2'],
+    'max_features': ['sqrt', 'log2', None],  # Removed 'auto'
     'max_depth': [None, 10, 20, 30, 40, 50],
     'min_samples_split': [2, 5, 10],
     'min_samples_leaf': [1, 2, 4],
     'bootstrap': [True, False],
     'criterion': ['gini', 'entropy']
 }
+
 
 # Initialize the RandomForestClassifier
 rf = RandomForestClassifier(random_state=150)
