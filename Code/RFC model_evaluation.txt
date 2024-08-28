@@ -1,0 +1,13 @@
+Accuracy for best Random Forest: 73.77%
+              precision    recall  f1-score   support
+
+           0       0.69      0.77      0.73      1134
+           1       0.80      0.63      0.70       437
+           2       0.76      0.36      0.49       230
+           3       0.77      0.84      0.80      1028
+
+    accuracy                           0.74      2829
+   macro avg       0.76      0.65      0.68      2829
+weighted avg       0.74      0.74      0.73      2829
+
+Best Parameters: {'n_estimators': 300, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': 20, 'criterion': 'entropy', 'bootstrap': False}
