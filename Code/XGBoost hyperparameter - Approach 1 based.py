@@ -1,3 +1,5 @@
+#Approach 1 based XGBoost hyperparameter
+
 import pandas as pd
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.metrics import classification_report, accuracy_score
@@ -22,12 +24,11 @@ param_dist = {
     'colsample_bytree': [0.6, 0.7, 0.8, 0.9, 1.0],
     'gamma': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
     'reg_alpha': [0, 0.01, 0.05, 0.1, 1],
-    'reg_lambda': [0.01, 0.05, 0.1, 0.5, 1],
-    'scale_pos_weight': [1, 2, 3, 5]
+    'reg_lambda': [0.01, 0.05, 0.1, 0.5, 1]
 }
 
 # Initialize the XGBClassifier
-xgb = XGBClassifier(objective='multi:softmax', eval_metric='mlogloss', random_state=150, use_label_encoder=False)
+xgb = XGBClassifier(objective='multi:softmax', eval_metric='mlogloss', random_state=150)
 
 # Initialize RandomizedSearchCV
 random_search = RandomizedSearchCV(
@@ -53,3 +54,7 @@ accuracy = accuracy_score(y_test, y_pred)
 
 print(f'Accuracy for best XGBoost: {accuracy * 100:.2f}%')
 print(classification_report(y_test, y_pred, zero_division=1))
+
+with open("XGBoost_model_evaluation.txt", "w") as file:
+    file.write(f'Accuracy for best XGBoost: {accuracy * 100:.2f}%\n')
+    file.write(classification_report(y_test, y_pred, zero_division=1))

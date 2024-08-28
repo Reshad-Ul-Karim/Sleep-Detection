@@ -54,3 +54,8 @@ accuracy = accuracy_score(y_test, y_pred)
 
 print(f'Accuracy for best Random Forest: {accuracy * 100:.2f}%')
 print(classification_report(y_test, y_pred, zero_division=1))
+
+# Save the accuracy and classification report to a text file
+with open("RFC model_evaluation.txt", "w") as file:
+    file.write(f'Accuracy for best Random Forest: {accuracy * 100:.2f}%\n')
+    file.write(classification_report(y_test, y_pred, zero_division=1))

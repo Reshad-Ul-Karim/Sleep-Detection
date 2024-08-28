@@ -1,0 +1,33 @@
+Accuracy for XGBoost: 73.17%
+              precision    recall  f1-score   support
+
+           0       0.69      0.78      0.73      1131
+           1       0.73      0.56      0.64       434
+           2       0.75      0.48      0.59       242
+           3       0.78      0.81      0.80      1026
+
+    accuracy                           0.73      2833
+   macro avg       0.74      0.66      0.69      2833
+weighted avg       0.73      0.73      0.73      2833
+Accuracy for Random Forest: 73.42%
+              precision    recall  f1-score   support
+
+           0       0.68      0.81      0.74      1131
+           1       0.79      0.54      0.64       434
+           2       0.78      0.36      0.50       242
+           3       0.78      0.82      0.80      1026
+
+    accuracy                           0.73      2833
+   macro avg       0.76      0.63      0.67      2833
+weighted avg       0.74      0.73      0.73      2833
+Accuracy for CatBoost: 73.31%
+              precision    recall  f1-score   support
+
+           0       0.69      0.77      0.73      1131
+           1       0.72      0.60      0.65       434
+           2       0.74      0.43      0.55       242
+           3       0.79      0.82      0.80      1026
+
+    accuracy                           0.73      2833
+   macro avg       0.73      0.66      0.68      2833
+weighted avg       0.73      0.73      0.73      2833

@@ -30,6 +30,7 @@ param_dist = {
 cb = CatBoostClassifier(loss_function='MultiClass', eval_metric='Accuracy', random_state=150, verbose=0)
 
 # Initialize RandomizedSearchCV
+'''
 random_search = RandomizedSearchCV(
     estimator=cb,
     param_distributions=param_dist,
@@ -38,6 +39,18 @@ random_search = RandomizedSearchCV(
     verbose=2,
     random_state=150,
     n_jobs=-1  # Use all available cores
+)
+'''
+#Shorter process
+
+random_search = RandomizedSearchCV(
+    estimator=cb,
+    param_distributions=param_dist,
+    n_iter=50,  # Reduce the number of parameter settings to explore
+    cv=3,  # Reduce the cross-validation folds to 3
+    verbose=1,  # Less verbose output
+    random_state=150,
+    n_jobs=-1  # Consider limiting to a smaller number of cores if necessary
 )
 
 # Fit the RandomizedSearchCV to find the best parameters
@@ -53,3 +66,7 @@ accuracy = accuracy_score(y_test, y_pred)
 
 print(f'Accuracy for best CatBoost: {accuracy * 100:.2f}%')
 print(classification_report(y_test, y_pred, zero_division=1))
+
+with open("Catboost model_evaluation.txt", "w") as file:
+    file.write(f'Accuracy for best CatBoost: {accuracy * 100:.2f}%\n')
+    file.write(classification_report(y_test, y_pred, zero_division=1))
