@@ -1,16 +1,16 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, roc_curve, auc, RocCurveDisplay
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
-from sklearn.preprocessing import label_binarize, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 import seaborn as sns
-import shap
+from sklearn.inspection import permutation_importance
 
 # Load the dataset
 df = pd.read_csv("Sleep_Stage_Combo_main.csv")
@@ -19,13 +19,9 @@ drop_columns = ['SubNo', "SegNo", "Class", 'averageTeagerEnergy', 'harmonicMean'
 X = df.drop(drop_columns, axis=1)
 y = df["Class"]
 
-# Binarize the output for ROC curves
-y_bin = label_binarize(y, classes=np.unique(y))
-n_classes = y_bin.shape[1]
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=150, stratify=y)
 
-# SHAP for Random Forest
+# Random Forest Feature Importance
 best_rf = RandomForestClassifier(
     n_estimators=300,
     min_samples_split=5,
@@ -38,14 +34,18 @@ best_rf = RandomForestClassifier(
 )
 
 best_rf.fit(X_train, y_train)
-explainer_rf = shap.TreeExplainer(best_rf)
-shap_values_rf = explainer_rf.shap_values(X_test)
+rf_importances = best_rf.feature_importances_
 
-# SHAP Summary Plot for Random Forest
-shap.summary_plot(shap_values_rf, X_test, feature_names=X.columns)
-plt.savefig('shap_summary_rf.png')
+# Plot Random Forest feature importances
+plt.figure(figsize=(10, 6))
+sns.barplot(x=rf_importances, y=X.columns)
+plt.title('Random Forest Feature Importances')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.savefig('rf_feature_importance.png')
+plt.show()
 
-# SHAP for SVM
+# SVM Feature Importance (Permutation Importance for non-linear kernel)
 best_svm_model = Pipeline([
     ('scaler', StandardScaler()),
     ('svm', SVC(
@@ -57,20 +57,25 @@ best_svm_model = Pipeline([
         coef0=0.5,
         class_weight='balanced',
         C=100.0,
-        probability=True,  # Enable probability estimates for SHAP
+        probability=True,
         random_state=160
     ))
 ])
 
 best_svm_model.fit(X_train, y_train)
-explainer_svm = shap.KernelExplainer(best_svm_model.predict_proba, X_train)
-shap_values_svm = explainer_svm.shap_values(X_test)
+result = permutation_importance(best_svm_model, X_test, y_test, n_repeats=10, random_state=42, n_jobs=-1)
+svm_importances = result.importances_mean
 
-# SHAP Summary Plot for SVM
-shap.summary_plot(shap_values_svm, X_test, feature_names=X.columns)
-plt.savefig('shap_summary_svm.png')
+# Plot SVM feature importances
+plt.figure(figsize=(10, 6))
+sns.barplot(x=svm_importances, y=X.columns)
+plt.title('SVM Feature Importances (Permutation)')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.savefig('svm_feature_importance.png')
+plt.show()
 
-# SHAP for XGBoost
+# XGBoost Feature Importance
 best_xgb = XGBClassifier(
     objective='multi:softmax',
     eval_metric='mlogloss',
@@ -86,14 +91,18 @@ best_xgb = XGBClassifier(
 )
 
 best_xgb.fit(X_train, y_train)
-explainer_xgb = shap.TreeExplainer(best_xgb)
-shap_values_xgb = explainer_xgb.shap_values(X_test)
+xgb_importances = best_xgb.feature_importances_
 
-# SHAP Summary Plot for XGBoost
-shap.summary_plot(shap_values_xgb, X_test, feature_names=X.columns)
-plt.savefig('shap_summary_xgb.png')
+# Plot XGBoost feature importances
+plt.figure(figsize=(10, 6))
+sns.barplot(x=xgb_importances, y=X.columns)
+plt.title('XGBoost Feature Importances')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.savefig('xgb_feature_importance.png')
+plt.show()
 
-# SHAP for CatBoost
+# CatBoost Feature Importance
 best_params = {
     'bagging_temperature': 0.41750608402789213,
     'boosting_type': 'Ordered',
@@ -122,9 +131,13 @@ best_catboost = CatBoostClassifier(
 )
 
 best_catboost.fit(X_train, y_train)
-explainer_catboost = shap.TreeExplainer(best_catboost)
-shap_values_catboost = explainer_catboost.shap_values(X_test)
+catboost_importances = best_catboost.get_feature_importance()
 
-# SHAP Summary Plot for CatBoost
-shap.summary_plot(shap_values_catboost, X_test, feature_names=X.columns)
-plt.savefig('shap_summary_catboost.png')
+# Plot CatBoost feature importances
+plt.figure(figsize=(10, 6))
+sns.barplot(x=catboost_importances, y=X.columns)
+plt.title('CatBoost Feature Importances')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.savefig('catboost_feature_importance.png')
+plt.show()
