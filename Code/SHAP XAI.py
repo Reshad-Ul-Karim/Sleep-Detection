@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, roc_curve, auc, RocCurveDisplay
+from sklearn.metrics import classification_report, accuracy_score, roc_curve, auc, RocCurveDisplay
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
@@ -9,11 +9,10 @@ from catboost import CatBoostClassifier
 from sklearn.preprocessing import label_binarize, StandardScaler
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
-import seaborn as sns
 import shap
 
 # Load the dataset
-df = pd.read_csv("Sleep_Stage_Combo_main.csv")
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 drop_columns = ['SubNo', "SegNo", "Class", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
                 'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
 X = df.drop(drop_columns, axis=1)
@@ -63,7 +62,9 @@ best_svm_model = Pipeline([
 ])
 
 best_svm_model.fit(X_train, y_train)
-explainer_svm = shap.KernelExplainer(best_svm_model.predict_proba, X_train)
+
+# Use the whole pipeline in the KernelExplainer, focusing on predict_proba
+explainer_svm = shap.KernelExplainer(lambda x: best_svm_model.predict_proba(x), X_train)
 shap_values_svm = explainer_svm.shap_values(X_test)
 
 # SHAP Summary Plot for SVM
