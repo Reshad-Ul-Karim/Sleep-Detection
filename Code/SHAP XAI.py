@@ -44,7 +44,7 @@ shap_values_rf = explainer_rf.shap_values(X_test)
 shap.summary_plot(shap_values_rf, X_test, feature_names=X.columns)
 plt.savefig('shap_summary_rf.png')
 
-# SHAP for SVM
+# SHAP for SVM with reduced background samples
 best_svm_model = Pipeline([
     ('scaler', StandardScaler()),
     ('svm', SVC(
@@ -63,8 +63,10 @@ best_svm_model = Pipeline([
 
 best_svm_model.fit(X_train, y_train)
 
-# Use the whole pipeline in the KernelExplainer, focusing on predict_proba
-explainer_svm = shap.KernelExplainer(lambda x: best_svm_model.predict_proba(x), X_train)
+# Reduce background data size for SHAP
+background = shap.sample(X_train, 100)  # Summarize background as 100 samples
+
+explainer_svm = shap.KernelExplainer(lambda x: best_svm_model.predict_proba(x), background)
 shap_values_svm = explainer_svm.shap_values(X_test)
 
 # SHAP Summary Plot for SVM

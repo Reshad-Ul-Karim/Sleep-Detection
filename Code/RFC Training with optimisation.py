@@ -17,14 +17,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_
 
 # Train the RandomForestClassifier with the best parameters
 best_rf = RandomForestClassifier(
-    n_estimators=300,
+    n_estimators=600,
     min_samples_split=5,
     min_samples_leaf=1,
-    max_features='log2',
+    max_features='sqrt',
     max_depth=20,
     criterion='entropy',
     bootstrap=False,
-    random_state=150
+    random_state=90
 )
 
 best_rf.fit(X_train, y_train)

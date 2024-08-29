@@ -4,13 +4,13 @@ from sklearn.metrics import classification_report, accuracy_score
 from xgboost import XGBClassifier
 
 # Load the dataset
-df = pd.read_csv("Sleep_Stage_Combo_main.csv")
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 
 # Split the dataset into training and testing sets
-drop_columns = ['SubNo', "SegNo", "Class",'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
+drop_columns = ['SubNo', "SegNo", "Class","Class2",'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
                 'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
 X = df.drop(drop_columns, axis=1)
-y = df["Class"]
+y = df["Class2"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=150)
 
 # Initialize the XGBClassifier with the best parameters
