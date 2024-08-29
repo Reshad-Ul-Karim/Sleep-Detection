@@ -13,24 +13,24 @@ import seaborn as sns
 from sklearn.inspection import permutation_importance
 
 # Load the dataset
-df = pd.read_csv("Sleep_Stage_Combo_main.csv")
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 drop_columns = ['SubNo', "SegNo", "Class", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
                 'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
 X = df.drop(drop_columns, axis=1)
-y = df["Class"]
+y = df["Class2"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=150, stratify=y)
 
 # Random Forest Feature Importance
 best_rf = RandomForestClassifier(
-    n_estimators=300,
+    n_estimators=600,
     min_samples_split=5,
     min_samples_leaf=1,
-    max_features='log2',
+    max_features='sqrt',
     max_depth=20,
     criterion='entropy',
     bootstrap=False,
-    random_state=150
+    random_state=90
 )
 
 best_rf.fit(X_train, y_train)
