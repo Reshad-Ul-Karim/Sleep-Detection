@@ -7,12 +7,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
 
 # Load the dataset
-df = pd.read_csv("Sleep_Stage_Combo_main.csv")
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 
 # Prepare the data
-drop_columns = ['SubNo', "Class", "SegNo"]
+drop_columns = ['SubNo', "SegNo", "Class", "Class2", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
+                'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
 X = df.drop(drop_columns, axis=1)
-y = df["Class"]
+y = df["Class2"]
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
@@ -20,7 +21,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # Create a pipeline with scaling and SVM
 svm_pipeline = Pipeline([
     ('scaler', StandardScaler()),
-    ('svm', SVC(random_state=42))
+    ('svm', SVC(random_state=160))
 ])
 
 # Define a more refined hyperparameter grid
