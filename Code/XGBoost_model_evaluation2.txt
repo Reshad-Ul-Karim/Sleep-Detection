@@ -1,0 +1,11 @@
+Accuracy for best XGBoost: 74.51%
+              precision    recall  f1-score   support
+
+           0       0.71      0.77      0.74      1134
+           1       0.76      0.61      0.67       437
+           2       0.77      0.46      0.58       230
+           3       0.78      0.84      0.81      1028
+
+    accuracy                           0.75      2829
+   macro avg       0.75      0.67      0.70      2829
+weighted avg       0.75      0.75      0.74      2829
