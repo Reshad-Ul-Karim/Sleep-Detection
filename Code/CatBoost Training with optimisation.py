@@ -6,10 +6,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load the dataset
-df = pd.read_csv('Sleep_Stage_Combo4.csv')
+df = pd.read_csv("Sleep_Stage_Combo2.csv")
 
 # Split the dataset into training and testing sets
-drop_columns = ['SubNo', "SegNo", "Class", "Class2"]
+drop_columns = ['SubNo', "SegNo", "Class", "Class2", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
+       'averageTeagerEnergy_statistical', 'harmonicMean_statistical','svdPPG']
+
 X = df.drop(drop_columns, axis=1)
 y = df["Class2"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.20, random_state=42)
