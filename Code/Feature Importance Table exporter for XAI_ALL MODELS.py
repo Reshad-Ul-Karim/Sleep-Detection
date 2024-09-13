@@ -1,21 +1,20 @@
 import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from collections import defaultdict
 from catboost import CatBoostClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
+from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import label_binarize
+from sklearn.preprocessing import StandardScaler
 from sklearn.inspection import permutation_importance
-
-# Load the dataset
-df = pd.read_csv("Sleep_Stage_Combo2.csv")
-drop_columns = ['SubNo', "SegNo", "Class", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
-                'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG', "Class2"]
+# Assuming you have your data in a DataFrame `df` and the target variable in `target`
+df = pd.read_csv('Sleep_Stage_Combo2.csv')
+drop_columns = ['SubNo', "SegNo", "Class", "Class2", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
+                'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
+# train test split
 X = df.drop(drop_columns, axis=1)
 y = df["Class2"]
 
@@ -62,63 +61,52 @@ hyperparameters_RF = {
     "bootstrap": False,
     "random_state": 150
 }
-cb = CatBoostClassifier(**hyperparameters_CB)
-xgb = XGBClassifier(**hyperparameters_XGB)
-rf = RandomForestClassifier(**hyperparameters_RF)
-svm = Pipeline([
-    ('scaler', StandardScaler()),
-    ('svm', SVC(
-        tol=0.12,
-        shrinking=False,
-        kernel='rbf',
-        gamma='scale',
-        degree=3,
-        coef0=0.5,
-        class_weight='balanced',
-        C=100.0,
-        probability=True,
-        random_state=160
-    ))
-])
-models = [
-    ("XGBoost", xgb, "Blues"),
-    ("Random Forest", rf, "Purples"),
-    ("CatBoost", cb, "Reds"),
-    ("SVM", svm, "Oranges")
-]
 
-# Initialize dictionaries to store cumulative feature importance for each model
-feature_importance_sums = {name: {feature: 0 for feature in X.columns} for name, _, _ in models}
+models = {
+    "RandomForest": RandomForestClassifier(**hyperparameters_RF),
+    "CatBoost": CatBoostClassifier(**hyperparameters_CB),
+    "XGBoost": XGBClassifier(**hyperparameters_XGB),
+    "SVM": Pipeline([
+        ('scaler', StandardScaler()),
+        ('svm', SVC(
+            tol=0.12,
+            shrinking=False,
+            kernel='rbf',
+            gamma='scale',
+            degree=3,
+            coef0=0.5,
+            class_weight='balanced',
+            C=100.0,
+            probability=True,  # Enable probability estimates for ROC curve
+            random_state=160
+        ))
+    ])
+}
 
-for i in range(10):
-    for name, model, color in models:
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=50 * i, stratify=y)
+all_importances = {model: {feature: 0 for feature in X.columns} for model in models}
+
+for name, model in models.items():
+    for i in range(5):
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=42 * i)
         model.fit(X_train, y_train)
-
-        # Get feature importance
         if name == "SVM":
             # For SVM, use permutation importance
             perm_importance = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=50 * i)
-            feature_importance = perm_importance.importances_mean
-            feature_importance = zip(X.columns, feature_importance)
+            importances = perm_importance.importances_mean
+            importances = zip(X.columns, importances)
         else:
-            feature_importance = model.feature_importances_
-            feature_importance = zip(X.columns, feature_importance)
-        for feature, importance in feature_importance:
-            # Add to cumulative sum
-            feature_importance_sums[name][feature] += importance
+            importances = pd.Series(model.feature_importances_, index=X.columns)
+        importances_by_index = importances.to_dict()
+        for feature in importances_by_index:
+            if name == "CatBoost":
+                importances_by_index[feature] /= 100
+            all_importances[name][feature] += importances_by_index[feature]
 
-        # Add to cumulative sum
+# Convert all_importances to DataFrame
+importances_df = pd.DataFrame(all_importances)
 
-# Calculate average feature importance
-feature_importance_avg = {name: {feature: importance / 10 for feature, importance in importance_dict.items()}
-                          for name, importance_dict in feature_importance_sums.items()}
+# Transpose the DataFrame to get models as columns and regions as rows
+importances_df = importances_df.transpose()
 
-# sort the feature_importance_avg
-for name, importance_dict in feature_importance_avg.items():
-    feature_importance_avg[name] = {k: v for k, v in
-                                    sorted(importance_dict.items(), key=lambda item: item[1], reverse=True)}
-# Create a DataFrame with feature names and importance for each model
-feature_importance_df = pd.DataFrame(feature_importance_avg)
-# export the feature_importance_df with model name as column and feature name as content
-feature_importance_df.to_csv("feature_importance_df.csv")
+# Save the DataFrame to CSV
+importances_df.to_csv('model_importances.csv')
