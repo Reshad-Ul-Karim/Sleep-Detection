@@ -92,10 +92,11 @@ for name, model in models.items():
         if name == "SVM":
             # For SVM, use permutation importance
             perm_importance = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=50 * i)
-            importances = perm_importance.importances_mean
-            importances = zip(X.columns, importances)
+            importances = dict(zip(X.columns, perm_importance.importances_mean))  # Convert to dictionary
         else:
-            importances = pd.Series(model.feature_importances_, index=X.columns)
+            importances = pd.Series(model.feature_importances_,
+                                    index=X.columns).to_dict()  # Directly convert to dictionary
+
         importances_by_index = importances.to_dict()
         for feature in importances_by_index:
             if name == "CatBoost":
