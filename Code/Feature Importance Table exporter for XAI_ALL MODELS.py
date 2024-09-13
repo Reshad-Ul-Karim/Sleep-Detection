@@ -1,43 +1,40 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from collections import defaultdict
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
-import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import label_binarize
 from sklearn.preprocessing import StandardScaler
 from sklearn.inspection import permutation_importance
-# Assuming you have your data in a DataFrame `df` and the target variable in `target`
+
+# Load the data
 df = pd.read_csv('Sleep_Stage_Combo2.csv')
+
+# Drop unnecessary columns
 drop_columns = ['SubNo', "SegNo", "Class", "Class2", 'averageTeagerEnergy', 'harmonicMean', 'svdPPI',
                 'averageTeagerEnergy_statistical', 'harmonicMean_statistical', 'svdPPG']
-# train test split
 X = df.drop(drop_columns, axis=1)
 y = df["Class2"]
 
+# Hyperparameters for models
 hyperparameters_CB = {
-    'bagging_temperature': 0.41750608402789213,
+    'bagging_temperature': 0.4175,
     'boosting_type': 'Ordered',
     'bootstrap_type': 'MVS',
     'border_count': 65,
-    'class_weights': {0: 0.15504341779626502, 1: 0.31884044106753684, 2: 0.1498282622340735, 3: 0.3762878789021247},
+    'class_weights': {0: 0.155, 1: 0.319, 2: 0.15, 3: 0.376},
     'depth': 9,
-    'grow_policy': 'SymmetricTree',
     'iterations': 858,
-    'l2_leaf_reg': 2.8547290957672247,
-    'leaf_estimation_iterations': 2,
-    'leaf_estimation_method': 'Gradient',
-    'learning_rate': 0.28977697282757586,
+    'l2_leaf_reg': 2.85,
+    'learning_rate': 0.289,
     'min_data_in_leaf': 7,
     'od_type': 'Iter',
     'od_wait': 38,
-    'random_strength': 0.7671882889311269,
-    'rsm': 0.46173782224831794,
-    'score_function': 'Cosine'
+    'random_strength': 0.767,
+    'rsm': 0.462
 }
+
 hyperparameters_XGB = {
     "objective": 'multi:softmax',
     "eval_metric": 'mlogloss',
@@ -48,9 +45,9 @@ hyperparameters_XGB = {
     "n_estimators": 600,
     "max_depth": 9,
     "learning_rate": 0.05,
-    "gamma": 0,
     "colsample_bytree": 0.9
 }
+
 hyperparameters_RF = {
     "n_estimators": 300,
     "min_samples_split": 5,
@@ -62,6 +59,7 @@ hyperparameters_RF = {
     "random_state": 150
 }
 
+# Models dictionary
 models = {
     "RandomForest": RandomForestClassifier(**hyperparameters_RF),
     "CatBoost": CatBoostClassifier(**hyperparameters_CB),
@@ -83,30 +81,36 @@ models = {
     ])
 }
 
+# Initialize dictionary to store feature importances
 all_importances = {model: {feature: 0 for feature in X.columns} for model in models}
 
+# Train models and gather feature importances
 for name, model in models.items():
-    for i in range(5):
+    for i in range(5):  # Run the process 5 times to average feature importance
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=42 * i)
         model.fit(X_train, y_train)
+
         if name == "SVM":
             # For SVM, use permutation importance
             perm_importance = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=50 * i)
             importances = dict(zip(X.columns, perm_importance.importances_mean))  # Convert to dictionary
         else:
-            importances = pd.Series(model.feature_importances_,
-                                    index=X.columns).to_dict()  # Directly convert to dictionary
+            # For other models, use feature importances directly
+            importances = pd.Series(model.feature_importances_, index=X.columns).to_dict()
 
-        importances_by_index = importances.to_dict()
-        for feature in importances_by_index:
-            if name == "CatBoost":
-                importances_by_index[feature] /= 100
-            all_importances[name][feature] += importances_by_index[feature]
+        # Adjust CatBoost feature importances (if required)
+        if name == "CatBoost":
+            for feature in importances:
+                importances[feature] /= 100
+
+        # Accumulate feature importances
+        for feature in importances:
+            all_importances[name][feature] += importances[feature]
 
 # Convert all_importances to DataFrame
 importances_df = pd.DataFrame(all_importances)
 
-# Transpose the DataFrame to get models as columns and regions as rows
+# Transpose the DataFrame to get models as columns and features as rows
 importances_df = importances_df.transpose()
 
 # Save the DataFrame to CSV
