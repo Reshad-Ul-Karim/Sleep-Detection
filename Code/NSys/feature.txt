@@ -1,0 +1,41 @@
+svm_features = [
+    'stdA1', 'RMSSDppAmp', 'SDSDppAmp', 'SDppAmp', 'SDSDpw', 'stdT1', 'CCM', 'CCM_statistical', 'stdArea',
+    'meanT2', 'AVpw', 'AVppAmp', 'meanA2', 'meanA1', 'RMSSDpw', 'shapeFactor', 'shapeFactor_statistical',
+    'stdA2', 'MeanAbsDev', 'MeanAbsDev_statistical', 'SDpw', 'meanValue', 'meanValue_statistical', 'MedianAbsDev',
+    'MedianAbsDev_statistical', 'InterquartileRange', 'InterquartileRange_statistical', 'stdT2', 'meanT1',
+    'skewPPI', 'skewPPG', 'HjorthComplexity', 'HjorthComplexity_statistical', 'kurtPPI', 'kurtPPG', 'minValue',
+    'minValue_statistical', 'HFD', 'HFD_statistical', 'PoincareSD2', 'PoincareSD2_statistical', 'PoincareSD1',
+    'PoincareSD1_statistical', 'meanIPTR', 'meanArea', 'ratioSD1SD2', 'ratioSD1SD2_statistical', 'tmean50'
+]
+
+# RandomForest sorted features with hyperparameters
+rf_features = [
+    'AVpw', 'meanT1', 'HFD_statistical', 'HFD', 'meanA1', 'stdA1', 'stdIPAR', 'HjorthComplexity', 'meanArea',
+    'HjorthComplexity_statistical', 'meanIPTR', 'meanA2', 'stdIPTR', 'meanT2', 'RMSSDppAmp', 'SDpw', 'meanIPAR',
+    'stdT1', 'stdArea', 'SDSDppAmp', 'stdT2', 'meanValue', 'shapeFactor_statistical', 'shapeFactor', 'meanValue_statistical',
+    'SDSDpw', 'SDppAmp', 'stdA2', 'skewPPG', 'tmean25', 'RMSSDpw', 'skewPPI', 'tmean25_statistical', 'AVppAmp',
+    'geometricMean_statistical', 'minValue_statistical', 'minValue', 'tmean50_statistical', 'geometricMean',
+    'centralMoment_statistical', 'InterquartileRange_statistical', 'tmean50', 'centralMoment', 'InterquartileRange',
+    'MeanAbsDev_statistical', 'MedianAbsDev', 'MeanAbsDev', 'MedianAbsDev_statistical', 'kurtPPI', 'kurtPPG', 'PoincareSD2'
+]
+
+# CatBoost sorted features with hyperparameters
+catboost_features = [
+    'stdA1', 'RMSSDppAmp', 'HjorthComplexity', 'meanT2', 'stdIPAR', 'HjorthComplexity_statistical', 'SDpw', 'meanIPTR',
+    'meanA2', 'AVpw', 'SDppAmp', 'stdIPTR', 'SDSDppAmp', 'shapeFactor_statistical', 'stdArea', 'tmean25', 'SDSDpw',
+    'meanIPAR', 'shapeFactor', 'meanValue', 'meanT1', 'stdT1', 'stdT2', 'AVppAmp', 'HFD_statistical', 'meanValue_statistical',
+    'HFD', 'meanArea', 'RMSSDpw', 'meanA1', 'stdA2', 'tmean25_statistical', 'tmean50', 'skewPPI', 'lam', 'tmean50_statistical',
+    'MeanAbsDev', 'CCM', 'minValue', 'InterquartileRange', 'rmsValue', 'CCM_statistical'
+]
+
+# XGBoost sorted features with hyperparameters
+xgb_features = [
+    'AVpw', 'HjorthComplexity_statistical', 'meanT1', 'maxValue_statistical', 'stdIPTR', 'shapeFactor_statistical',
+    'shapeFactor', 'stdA1', 'stdIPAR', 'ratioSD1SD2', 'HjorthComplexity', 'KFD_statistical', 'HFD', 'meanArea',
+    'minValue_statistical', 'meanA2', 'SDpw', 'RMSSDppAmp', 'HFD_statistical', 'SDppAmp', 'MeanAbsDev', 'minValue',
+    'MeanAbsDev_statistical', 'meanT2', 'PoincareSD1_statistical', 'tmean25', 'ratioSD1SD2_statistical', 'InterquartileRange_statistical',
+    'maxValue', 'InterquartileRange', 'tmean25_statistical', 'KFD', 'HjorthMobility', 'MedianAbsDev_statistical',
+    'AVppAmp', 'geometricMean', 'CCM', 'MedianAbsDev', 'meanIPTR', 'PoincareSD1', 'meanIPAR', 'CCM_statistical',
+    'meanValue_statistical', 'skewPPG', 'meanA1', 'stdArea', 'centralMoment_statistical', 'SDSDpw', 'stdT2', 'PoincareSD2',
+    'SDSDppAmp', 'meanValue', 'skewPPI', 'stdA2', 'stdT1', 'PoincareSD2_statistical', 'geometricMean_statistical'
+]
