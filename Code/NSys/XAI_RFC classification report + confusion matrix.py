@@ -19,8 +19,7 @@ sorted_features = ['AVpw', 'meanT1', 'HFD_statistical', 'HFD', 'meanA1', 'stdA1'
                    'skewPPI', 'tmean25_statistical', 'AVppAmp', 'geometricMean_statistical', 'minValue_statistical',
                    'minValue', 'tmean50_statistical', 'geometricMean', 'centralMoment_statistical',
                    'InterquartileRange_statistical', 'tmean50', 'centralMoment', 'InterquartileRange', 'MeanAbsDev_statistical',
-                   'MedianAbsDev', 'MeanAbsDev', 'MedianAbsDev_statistical', 'kurtPPI', 'kurtPPG', 'PoincareSD2',
-                   'maxValue', 'lam_statistical', 'PoincareSD2_statistical']
+                   'MedianAbsDev', 'MeanAbsDev', 'MedianAbsDev_statistical', 'kurtPPI', 'kurtPPG', 'PoincareSD2']
 
 # Hyperparameters for RandomForestClassifier
 hyperparameters_RF = {
@@ -85,7 +84,7 @@ plt.xticks(fontsize=35)
 plt.yticks(fontsize=35)
 
 # Save the figure with bbox_inches set to tight
-plt.savefig('confusion_matrix_RF_top58.png', bbox_inches='tight')
+plt.savefig('confusion_matrix_RF.png', bbox_inches='tight')
 
 # Show the plot
 plt.show()
