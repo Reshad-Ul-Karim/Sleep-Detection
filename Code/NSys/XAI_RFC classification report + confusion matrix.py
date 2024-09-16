@@ -5,24 +5,24 @@ from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+from collections import defaultdict
 
 # Load dataset
 df = pd.read_csv("Sleep_Stage_Combo2.csv")
 y = df["Class2"]
 
-# New sorted features list
-sorted_features = [
-    'AVpw', 'meanT1', 'HFD_statistical', 'HFD', 'meanA1', 'stdA1', 'stdIPAR', 'HjorthComplexity', 'meanArea',
-    'HjorthComplexity_statistical', 'meanIPTR', 'meanA2', 'stdIPTR', 'meanT2', 'RMSSDppAmp', 'SDpw', 'meanIPAR',
-    'stdT1', 'stdArea', 'SDSDppAmp', 'stdT2', 'meanValue', 'shapeFactor_statistical', 'shapeFactor',
-    'meanValue_statistical', 'SDSDpw', 'SDppAmp', 'stdA2', 'skewPPG', 'tmean25', 'RMSSDpw', 'skewPPI',
-    'tmean25_statistical', 'AVppAmp', 'geometricMean_statistical', 'minValue_statistical', 'minValue',
-    'tmean50_statistical', 'geometricMean', 'centralMoment_statistical', 'InterquartileRange_statistical',
-    'tmean50', 'centralMoment', 'InterquartileRange', 'MeanAbsDev_statistical', 'MedianAbsDev', 'MeanAbsDev',
-    'MedianAbsDev_statistical', 'kurtPPI', 'kurtPPG', 'PoincareSD2', 'maxValue', 'lam_statistical'
-]
+# Top 58 sorted features
+sorted_features = ['AVpw', 'meanT1', 'HFD_statistical', 'HFD', 'meanA1', 'stdA1', 'stdIPAR', 'HjorthComplexity',
+                   'meanArea', 'HjorthComplexity_statistical', 'meanIPTR', 'meanA2', 'stdIPTR', 'meanT2', 'RMSSDppAmp',
+                   'SDpw', 'meanIPAR', 'stdT1', 'stdArea', 'SDSDppAmp', 'stdT2', 'meanValue', 'shapeFactor_statistical',
+                   'shapeFactor', 'meanValue_statistical', 'SDSDpw', 'SDppAmp', 'stdA2', 'skewPPG', 'tmean25', 'RMSSDpw',
+                   'skewPPI', 'tmean25_statistical', 'AVppAmp', 'geometricMean_statistical', 'minValue_statistical',
+                   'minValue', 'tmean50_statistical', 'geometricMean', 'centralMoment_statistical',
+                   'InterquartileRange_statistical', 'tmean50', 'centralMoment', 'InterquartileRange', 'MeanAbsDev_statistical',
+                   'MedianAbsDev', 'MeanAbsDev', 'MedianAbsDev_statistical', 'kurtPPI', 'kurtPPG', 'PoincareSD2',
+                   'maxValue', 'lam_statistical', 'PoincareSD2_statistical']
 
-# Hyperparameters for the RandomForestClassifier
+# Hyperparameters for RandomForestClassifier
 hyperparameters_RF = {
     "n_estimators": 300,
     "min_samples_split": 5,
@@ -34,16 +34,16 @@ hyperparameters_RF = {
     "random_state": 150
 }
 
-# Use all features for the model
+# Use the top 58 features for the model
 X = df[sorted_features]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=160)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# Initialize and fit the RandomForest model
+# Initialize the RandomForest model
 clf = RandomForestClassifier(**hyperparameters_RF)
 
-# Measure training time
+# Measure the training time
 start_time = time.time()  # Start time
-clf.fit(X_train, y_train)
+clf.fit(X_train, y_train)  # Fit the model
 end_time = time.time()  # End time
 training_time = end_time - start_time  # Calculate training time
 
@@ -53,7 +53,7 @@ accuracy = clf.score(X_test, y_test)
 accuracy_percentage = accuracy * 100  # Convert accuracy to percentage
 
 # Output the result
-print(f"Accuracy with all features: {accuracy:.4f}")
+print(f"Accuracy with top 58 features: {accuracy:.4f}")
 print(f"Training time: {training_time:.2f} seconds")  # Display training time
 
 # Define the labels
@@ -85,7 +85,7 @@ plt.xticks(fontsize=35)
 plt.yticks(fontsize=35)
 
 # Save the figure with bbox_inches set to tight
-plt.savefig('confusion_matrix_RF.png', bbox_inches='tight')
+plt.savefig('confusion_matrix_RF_top58.png', bbox_inches='tight')
 
 # Show the plot
 plt.show()
