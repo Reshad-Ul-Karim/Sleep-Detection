@@ -76,11 +76,11 @@ cm = confusion_matrix(y_test, y_pred)
 # Adjust the labels in the confusion matrix plot according to the provided mapping
 label_mapping = {0: 'LS', 1: 'DS', 2: 'REM', 3: 'Wake'}
 
-# Plot the confusion matrix with labels, accuracy, and training time in the title
+# Plot the confusion matrix with the correct label mapping for both axes
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 heatmap = sns.heatmap(cm, annot=True, fmt='d', cmap='Oranges', cbar=True, annot_kws={"size": 35},
                       xticklabels=[label_mapping[i] for i in range(4)],
-                      yticklabels=[label_mapping[i] for i in range(4)])
+                      yticklabels=[label_mapping[i] for i in range(4)][::-1])   # Correct order of y-axis labels
 
 # Customize the color bar font size to 25
 cbar = heatmap.collections[0].colorbar
@@ -100,4 +100,5 @@ plt.savefig('confusion_matrix_catboost.png', bbox_inches='tight')
 
 # Show the plot
 plt.show()
+
 

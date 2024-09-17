@@ -11,7 +11,7 @@ from collections import defaultdict
 df = pd.read_csv("Sleep_Stage_Combo2.csv")
 y = df["Class2"]
 
-# Top 58 sorted features
+# Top 51 sorted features
 sorted_features = ['AVpw', 'meanT1', 'HFD_statistical', 'HFD', 'meanA1', 'stdA1', 'stdIPAR', 'HjorthComplexity',
                    'meanArea', 'HjorthComplexity_statistical', 'meanIPTR', 'meanA2', 'stdIPTR', 'meanT2', 'RMSSDppAmp',
                    'SDpw', 'meanIPAR', 'stdT1', 'stdArea', 'SDSDppAmp', 'stdT2', 'meanValue', 'shapeFactor_statistical',
@@ -68,7 +68,7 @@ cm = confusion_matrix(y_test, y_pred)
 # Plot the confusion matrix with the 'Purples' colormap and integer format
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 heatmap = sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', cbar=True, annot_kws={"size": 35},
-                      xticklabels=labels, yticklabels=labels)
+                      xticklabels=labels, yticklabels=labels[::-1])
 
 # Customize the color bar font size to 25
 cbar = heatmap.collections[0].colorbar
