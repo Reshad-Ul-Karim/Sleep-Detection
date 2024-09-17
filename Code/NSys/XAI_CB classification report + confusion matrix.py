@@ -79,7 +79,7 @@ label_mapping = {0: 'LS', 1: 'DS', 2: 'REM', 3: 'Wake'}
 # Plot the confusion matrix with the correct label mapping for both axes
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 heatmap = sns.heatmap(cm, annot=True, fmt='d', cmap='Oranges', cbar=True, annot_kws={"size": 35},
-                      xticklabels=[label_mapping[i] for i in range(4)],
+                      xticklabels=[label_mapping[i] for i in range(4)][::-1],
                       yticklabels=[label_mapping[i] for i in range(4)][::-1])   # Correct order of y-axis labels
 
 # Customize the color bar font size to 25

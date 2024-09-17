@@ -52,7 +52,7 @@ accuracy = clf.score(X_test, y_test)
 accuracy_percentage = accuracy * 100  # Convert accuracy to percentage
 
 # Output the result
-print(f"Accuracy with top 58 features: {accuracy:.4f}")
+print(f"Accuracy with top {len(sorted_features)} features: {accuracy:.4f}")
 print(f"Training time: {training_time:.2f} seconds")  # Display training time
 
 # Define the labels
@@ -68,7 +68,7 @@ cm = confusion_matrix(y_test, y_pred)
 # Plot the confusion matrix with the 'Purples' colormap and integer format
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 heatmap = sns.heatmap(cm, annot=True, fmt='d', cmap='Purples', cbar=True, annot_kws={"size": 35},
-                      xticklabels=labels, yticklabels=labels[::-1])
+                      xticklabels=labels[::-1], yticklabels=labels[::-1])
 
 # Customize the color bar font size to 25
 cbar = heatmap.collections[0].colorbar

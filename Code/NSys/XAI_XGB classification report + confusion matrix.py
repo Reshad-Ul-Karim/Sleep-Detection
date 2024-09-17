@@ -1,11 +1,11 @@
 import time
-
 import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 
 # New sorted features list
 sorted_features = [
@@ -77,7 +77,9 @@ cm = confusion_matrix(y_test, y_pred)
 # Plot the confusion matrix with the 'Greens' colormap
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 sns.heatmap(cm, annot=True, fmt='d', cmap='Greens', cbar=True, annot_kws={"size": 35},
-            xticklabels=labels, yticklabels=labels[::-1])  # Use labels for ticks
+            xticklabels=labels[::-1], yticklabels=labels[::-1])  # Use labels for ticks
+
+
 plt.xlabel('Predicted Label', fontsize=35)
 plt.ylabel('True Label', fontsize=35)
 plt.title('Confusion Matrix', fontsize=40)

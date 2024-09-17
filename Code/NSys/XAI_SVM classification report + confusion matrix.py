@@ -73,7 +73,7 @@ cm = confusion_matrix(y_test, y_pred)
 # Plot the confusion matrix with larger fonts
 plt.figure(figsize=(12, 10))  # Increase figure size to accommodate larger fonts
 heatmap = sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=True, annot_kws={"size": 35},
-                      xticklabels=labels, yticklabels=labels[::-1])  # Use labels for ticks
+                      xticklabels=labels[::-1], yticklabels=labels[::-1])  # Use labels for ticks
 
 # Customize the color bar font size to 25
 cbar = heatmap.collections[0].colorbar
